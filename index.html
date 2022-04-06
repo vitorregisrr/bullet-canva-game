@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+        <meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, user-scalable=no, shrink-to-fit=no"
+/>
+    <title>Bullets Arcade</title>
+
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            margin: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            background-color: black;
+        }
+        
+        .main-score{
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            z-index: 10;
+            color: #fff;
+            text-transform: uppercase;
+            font-size: 30px;
+            font-weight: bold;
+            user-select: none;
+        }
+
+        .game-over-popup{
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            width: 90vw;
+            height: auto;
+            max-width: 500px;
+            background-color: #fff;
+            display: flex;
+            flex-direction: column;
+            padding: 30px;
+            align-items: center;
+            color: black;
+            font-size: 30px;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.2s ease;
+        }
+
+        .game-over-popup[data-visible="true"]{
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        @media screen and (max-width: 920px){
+            .game-over-popup{
+                width: 70vw;
+            }
+        }
+
+        .game-over-popup .score{
+            margin-bottom: 30px;
+        }
+
+
+        .game-over-popup .score span{
+            font-size: 50px;
+            display: block;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .button{
+            font-family: 'Courier New', monospace;
+            font-size: 20px;
+            background-color: rgb(214, 87, 87);
+            color: #fff;
+            width: 100%;
+            border: none;
+            padding: 10px;
+            border-radius: 100px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .button:hover{
+            transform: scale(1.01);
+            background-color: rgb(201, 82, 82);
+        }
+
+        .sound-button svg{
+            position: absolute;
+            height: 25px;
+            height: 25px;
+            top: 20px;
+            right: 20px;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .hidden{
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="sound-button">
+        <svg
+        id="soundOffEl"
+        xmlns="http://www.w3.org/2000/svg"
+        class=""
+        viewBox="0 0 20 20"
+        fill="white"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM14.657 2.929a1 1 0 011.414 0A9.972 9.972 0 0119 10a9.972 9.972 0 01-2.929 7.071 1 1 0 01-1.414-1.414A7.971 7.971 0 0017 10c0-2.21-.894-4.208-2.343-5.657a1 1 0 010-1.414zm-2.829 2.828a1 1 0 011.415 0A5.983 5.983 0 0115 10a5.984 5.984 0 01-1.757 4.243 1 1 0 01-1.415-1.415A3.984 3.984 0 0013 10a3.983 3.983 0 00-1.172-2.828 1 1 0 010-1.415z"
+          clip-rule="evenodd"
+        />
+      </svg>
+  
+      <svg
+        id="soundOnEl"
+        xmlns="http://www.w3.org/2000/svg"
+        class="hidden"
+        viewBox="0 0 20 20"
+        fill="white"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM12.293 7.293a1 1 0 011.414 0L15 8.586l1.293-1.293a1 1 0 111.414 1.414L16.414 10l1.293 1.293a1 1 0 01-1.414 1.414L15 11.414l-1.293 1.293a1 1 0 01-1.414-1.414L13.586 10l-1.293-1.293a1 1 0 010-1.414z"
+          clip-rule="evenodd"
+        />
+      </svg>
+    </div>
+    <div class="main-score"><span>Score: <span data-content="score-el">0</span></span></div>
+    <div class="game-over-popup" id="game-over-popup" data-visible="true">
+        <div class="score">
+            <span data-content="score-el">0</span>
+            points
+        </div>
+
+        <button class="button" id="restart-button">
+            Start Game
+        </button>
+    </div>
+    <canvas></canvas>
+
+</body>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js" integrity="sha512-6+YN/9o9BWrk6wSfGxQGpt3EUK6XeHi6yeHV+TYD2GR0Sj/cggRpXr1BrAQf0as6XslxomMUxXp2vIl+fv0QRA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.10.2/gsap.min.js" integrity="sha512-kVlGhj2qFy+KBCFuvjBJTGUMxbdqJKs4yK2jh0e0VPhWUPiPC87bzm4THmaaIee3Oj7j6sDpTTgm2EPPiESqBg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="./index.js"></script>
+
+</html>
