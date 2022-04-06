@@ -301,25 +301,27 @@ const spawnEnemies = () => {
 };
 
 const spawnPowerUps = () => {
-  let x;
-  let y;
+  spawnPowerUpsInterval = setInterval(() => {
+    let x;
+    let y;
 
-  if (Math.random() < 0.5) {
-    x = Math.random() < 0.5 ? 0 - 7 : canvas.width + 7;
-    y = Math.random() * canvas.height;
-  } else {
-    x = Math.random() * canvas.width;
-    y = Math.random() < 0.5 ? 0 - 9 : canvas.height + 9;
-  }
+    if (Math.random() < 0.5) {
+      x = Math.random() < 0.5 ? 0 - 7 : canvas.width + 7;
+      y = Math.random() * canvas.height;
+    } else {
+      x = Math.random() * canvas.width;
+      y = Math.random() < 0.5 ? 0 - 9 : canvas.height + 9;
+    }
 
-  const angle = Math.atan2(canvas.height / 2 - y, canvas.width / 2 - x);
+    const angle = Math.atan2(canvas.height / 2 - y, canvas.width / 2 - x);
 
-  const velocity = {
-    x: Math.cos(angle),
-    y: Math.sin(angle),
-  };
+    const velocity = {
+      x: Math.cos(angle),
+      y: Math.sin(angle),
+    };
 
-  powerUps.push(new PowerUp(x, y, velocity));
+    powerUps.push(new PowerUp(x, y, velocity));
+  }, 15000);
 };
 
 let score = 0;
@@ -622,7 +624,8 @@ window.addEventListener("click", ({ clientX, clientY }) => {
 window.addEventListener("keydown", ({ keyCode }) => {
   if (scene.active) {
     switch (keyCode) {
-      case 87 || 68:
+      case 87:
+      case 38:
         console.log("up");
         if (player.velocity.y > -6) {
           if (player.velocity.y > 0) {
@@ -632,7 +635,8 @@ window.addEventListener("keydown", ({ keyCode }) => {
         }
         break;
 
-      case 65 || 37:
+      case 65:
+      case 37:
         if (player.velocity.x > -6) {
           if (player.velocity.x > 0) {
             player.velocity.x = 0;
@@ -641,7 +645,8 @@ window.addEventListener("keydown", ({ keyCode }) => {
         }
         break;
 
-      case 83 || 65:
+      case 83:
+      case 40:
         if (player.velocity.y < 6) {
           if (player.velocity.y < 0) {
             player.velocity.y = 0;
@@ -650,7 +655,8 @@ window.addEventListener("keydown", ({ keyCode }) => {
         }
         break;
 
-      case 68 || 83:
+      case 68:
+      case 39:
         if (player.velocity.x < 6) {
           if (player.velocity.x < 0) {
             player.velocity.x = 0;
